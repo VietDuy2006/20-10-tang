@@ -1,0 +1,61 @@
+================================================================================
+🌸 HƯỚNG DẪN SỬ DỤNG VÀ CHỈNH SỬA THIỆP 20/10 💐
+================================================================================
+
+1. CÁCH MỞ VÀ XEM THIỆP:
+- Nhấp đúp chuột vào file "index.html" để mở ngay bằng bất kỳ trình duyệt nào 
+  (Google Chrome, Microsoft Edge, Cốc Cốc, Safari, v.v.).
+- Chạm hoặc nhấp chuột vào Phong Bì Thư ở giữa màn hình để ngắm hiệu ứng 
+  hoa cúc, hoa hồng nhỏ và những bó hoa bung bay rực rỡ, sau đó thiệp sẽ 
+  tự động mở ra.
+
+--------------------------------------------------------------------------------
+2. CÁCH THAY ẢNH HOẶC CHÈN ẢNH KHÁC (TRONG CODE):
+- Bước 1: Copy file ảnh bạn muốn dùng vào cùng thư mục với file "index.html".
+  (Hiện tại trong thư mục đã có sẵn các file ảnh: "IMG_5534.JPG", 
+   "ai_repair_20261011210032551.JPEG", "ai_repair_20261012142211412.JPEG").
+- Bước 2: Mở file "index.html" bằng Notepad, VS Code hoặc bất kỳ trình soạn thảo nào.
+- Bước 3: Tìm dòng:
+  <img id="polaroid-img" src="ai_repair_20261011210032551.JPEG" ...>
+- Bước 4: Sửa tên file trong src="..." thành tên file ảnh của bạn.
+  Ví dụ muốn đổi sang ảnh khác:
+  src="IMG_5534.JPG"
+  hoặc:
+  src="anh_cua_ban.jpg"
+- Bước 5: Lưu lại (Ctrl + S) và mở file index.html lên xem kết quả!
+
+--------------------------------------------------------------------------------
+3. CÁCH ĐỔI TÊN NGƯỜI NHẬN ("send Yến"):
+- Mở file "index.html", tìm dòng:
+  <h1 class="card-title" id="card-title">send Yến</h1>
+- Đổi "send Yến" thành "send [Tên người bạn muốn tặng]" (Ví dụ: "send Em Yêu", "send Lan", v.v.).
+
+--------------------------------------------------------------------------------
+4. CÁCH ĐỔI LỜI CHÚC & BÀI THƠ:
+- Mở file "index.html", tìm đoạn <div class="card-message"> và sửa trực tiếp 
+  câu chữ tiếng Việt có dấu theo ý của bạn:
+  + Lời chúc: "20/10 chúc cậu một ngày thật rạng rỡ..."
+  + Bài thơ 4 câu lãng mạn bên dưới.
+
+--------------------------------------------------------------------------------
+5. CÁCH ĐỔI BÀI NHẠC NỀN (CHỈ CHỈNH SỬA TRỰC TIẾP TRONG CODE):
+- Bài nhạc hiện tại: Đã gắn cố định bài hát "Có Chắc Yêu Là Đây" (file "nhac.mp3") 
+  trực tiếp vào trong mã nguồn và cài đặt phát lặp lại vô hạn (infinite loop).
+- Cách đổi bài hát khác:
+  + Bước 1: Copy file nhạc mới (.mp3) vào cùng thư mục với "index.html".
+  + Bước 2: Mở file "index.html", tìm dòng:
+    <source src="nhac.mp3" type="audio/mpeg">
+  + Bước 3: Sửa "nhac.mp3" thành tên file nhạc mới của bạn (ví dụ: src="bai_hat_moi.mp3").
+  + Bước 4: Lưu lại (Ctrl + S). Nhạc sẽ tự động phát lặp vô hạn không ngừng.
+
+--------------------------------------------------------------------------------
+6. CÁCH ĐỔI MÀU NỀN ĐỎ ĐÔ / HOA VĂN:
+- Mở file "style.css", ngay phần đầu file (dòng 14-16) có các biến màu sắc:
+  --card-bg-start: #3b0a13;
+  --card-bg-mid:   #5e1220;
+  --card-bg-end:   #340810;
+  Bạn có thể đổi sang tone hồng pastel, tím nhạt hoặc bất kỳ mã màu nào bạn thích.
+
+--------------------------------------------------------------------------------
+Chúc bạn và người nhận có một ngày 20/10 thật hạnh phúc, ấm áp và rạng rỡ! 💐
+================================================================================

@@ -1,0 +1,719 @@
+/* ==========================================================================
+   🌸 BẢNG HƯỚNG DẪN TÙY CHỈNH DÀNH CHO BẠN (DỄ DÀNG ĐỔI MÀU SẮC & GIAO DIỆN)
+   --------------------------------------------------------------------------
+   - Để đổi màu nền đỏ đô: Sửa mã màu trong biến --card-bg-start và --card-bg-end
+   - Để đổi màu chữ: Sửa biến --text-cream hoặc --accent-gold
+   - Để đổi kích thước phong bì: Sửa biến --envelope-width và --envelope-height
+   ========================================================================== */
+
+:root {
+  /* Màu sắc giao diện ban đầu (Trạng thái đóng) */
+  --bg-closed: #ffffff;
+  --envelope-body: #faf7f2;
+  --envelope-inner: #f1eae0;
+  --envelope-pocket: #ede4d8;
+  --envelope-accent: #e4d7c6;
+  --arrow-blue: #2563eb;
+  --arrow-blue-glow: rgba(37, 99, 235, 0.35);
+
+  /* Màu sắc giao diện nội dung thiệp (Tone màu ấm áp đỏ đô quý phái) */
+  --card-bg-start: #3b0a13;    /* Đỏ đô đậm góc trên */
+  --card-bg-mid:   #5e1220;    /* Đỏ rượu vang nồng ấm ở giữa */
+  --card-bg-end:   #340810;    /* Đỏ nhung quý phái góc dưới */
+  --text-cream:    #fff7ec;    /* Màu chữ kem sáng ấm áp, dễ đọc */
+  --text-gold:     #ffe5a3;    /* Màu vàng hoàng kim cho tiêu đề "send Yến" */
+  --accent-gold:   #ffcb65;
+  --green-gift:    #156034;    /* Xanh lá đậm nổi bật cho nút "Create your own gift" */
+  --green-gift-hover: #1b7440;
+
+  /* Kích thước chuẩn phong bì (hỗ trợ tự co giãn trên điện thoại) */
+  --envelope-width: 320px;
+  --envelope-height: 200px;
+
+  /* Font chữ chuẩn hỗ trợ tiếng Việt mượt mà */
+  --font-script: 'Dancing Script', cursive;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Montserrat', sans-serif;
+  --font-soft: 'Quicksand', sans-serif;
+}
+
+/* Thiết lập căn bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-closed);
+  color: #333333;
+  overflow-x: hidden;
+  transition: background-color 0.8s ease;
+}
+
+/* ==========================================================================
+   CANVAS HIỆU ỨNG HOA BAY BÙNG NỔ (BÓ HOA, HOA CÚC, HOA HỒNG NHỎ, CÁNH HOA)
+   ========================================================================== */
+#flower-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* NÚT BẬT/TẮT NHẠC NỀN GIAO DIỆN */
+.music-toggle-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 30px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-soft);
+  color: #444;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.music-toggle-btn:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.music-toggle-btn.playing {
+  background: #fff;
+  border-color: #f43f5e;
+  color: #e11d48;
+}
+
+.music-toggle-btn.playing .music-icon {
+  display: inline-block;
+  animation: musicSpin 2s infinite ease-in-out;
+}
+
+@keyframes musicSpin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(15deg) scale(1.15); }
+}
+
+/* ==========================================================================
+   QUẢN LÝ CÁC MÀN HÌNH (SCREENS)
+   ========================================================================== */
+.screen-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+              visibility 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.screen-view.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  position: relative;
+}
+
+/* ==========================================================================
+   MÀN HÌNH 1: TRẠNG THÁI ĐÓNG (NỀN TRẮNG, PHONG BÌ THƯ, MŨI TÊN BOUNCE)
+   ========================================================================== */
+#envelope-screen {
+  background-color: var(--bg-closed);
+  padding: 40px 20px;
+}
+
+.envelope-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Dòng chữ: "Dành cho bạn 💐" (Google Fonts mềm mại, cách điệu) */
+.envelope-header-title {
+  font-family: var(--font-script);
+  font-size: clamp(34px, 6vw, 44px);
+  font-weight: 700;
+  color: #3b2a26;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  animation: floatSoft 3s ease-in-out infinite alternate;
+  text-shadow: 0 2px 8px rgba(180, 130, 100, 0.15);
+}
+
+@keyframes floatSoft {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-5px); }
+}
+
+/* Mũi tên xanh dương chỉ xuống phong bì + hiệu ứng bounce */
+.bouncing-arrow-wrapper {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bouncing-blue-arrow {
+  width: 32px;
+  height: 32px;
+  stroke: var(--arrow-blue);
+  filter: drop-shadow(0 4px 8px var(--arrow-blue-glow));
+  animation: gentleBounce 1.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite;
+}
+
+@keyframes gentleBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* ==========================================================================
+   THIẾT KẾ PHONG BÌ THƯ THANH LỊCH BẰNG CSS
+   ========================================================================== */
+.envelope-wrapper {
+  position: relative;
+  width: var(--envelope-width);
+  height: var(--envelope-height);
+  cursor: pointer;
+  perspective: 1200px;
+  margin: 10px 0 25px 0;
+  transition: transform 0.3s ease;
+}
+
+.envelope-wrapper:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.envelope-wrapper:focus {
+  outline: none;
+}
+
+.envelope {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--envelope-pocket);
+  border-radius: 8px;
+  box-shadow: 0 16px 36px rgba(130, 95, 70, 0.18),
+              0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Lá thư nhỏ ẩn bên trong phong bì */
+.letter-peek {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  right: 15px;
+  height: 160px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 2;
+  transition: transform 0.9s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+.letter-inner-design {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.85;
+}
+
+.letter-mini-flower {
+  font-size: 26px;
+  animation: petalWiggle 3s infinite ease-in-out;
+}
+
+@keyframes petalWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.letter-line {
+  width: 90px;
+  height: 3px;
+  background: #eed8c9;
+  border-radius: 2px;
+}
+
+.letter-line.short {
+  width: 55px;
+}
+
+/* Nắp gấp thân phong bì (Pocket) */
+.flap {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Nắp dưới đáy */
+.flap-bottom {
+  bottom: 0;
+  left: 0;
+  border-width: 0 calc(var(--envelope-width) / 2) 115px calc(var(--envelope-width) / 2);
+  border-color: transparent transparent var(--envelope-pocket) transparent;
+  z-index: 5;
+  filter: drop-shadow(0 -2px 3px rgba(0, 0, 0, 0.02));
+}
+
+/* Nắp gấp bên trái */
+.flap-left {
+  top: 0;
+  left: 0;
+  border-width: calc(var(--envelope-height) / 2) 0 calc(var(--envelope-height) / 2) 165px;
+  border-color: transparent transparent transparent var(--envelope-inner);
+  z-index: 4;
+}
+
+/* Nắp gấp bên phải */
+.flap-right {
+  top: 0;
+  right: 0;
+  border-width: calc(var(--envelope-height) / 2) 165px calc(var(--envelope-height) / 2) 0;
+  border-color: transparent var(--envelope-inner) transparent transparent;
+  z-index: 4;
+}
+
+/* Nắp trên của phong bì (Top Flap - mở lật 180 độ) */
+.flap-top {
+  top: 0;
+  left: 0;
+  border-width: 120px calc(var(--envelope-width) / 2) 0 calc(var(--envelope-width) / 2);
+  border-color: var(--envelope-body) transparent transparent transparent;
+  transform-origin: top center;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s 0.3s;
+  z-index: 6;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.07));
+}
+
+/* Con dấu niêm phong (Wax Seal) hoa cúc thanh lịch */
+.wax-seal {
+  position: absolute;
+  top: -128px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle, #f97316 0%, #ea580c 60%, #c2410c 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(194, 65, 12, 0.4),
+              inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wax-seal:hover {
+  transform: translateX(-50%) scale(1.12);
+  box-shadow: 0 6px 14px rgba(194, 65, 12, 0.5);
+}
+
+.seal-flower {
+  font-size: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+/* TRẠNG THÁI KHI MỞ PHONG BÌ */
+.envelope-wrapper.open .flap-top {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.envelope-wrapper.open .wax-seal {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.envelope-wrapper.open .letter-peek {
+  transform: translateY(-90px);
+  z-index: 3;
+}
+
+/* Dòng chữ: "Hãy mở thư nhó" */
+.envelope-footer-text {
+  font-family: var(--font-soft);
+  font-size: 19px;
+  font-weight: 700;
+  color: #4b3832;
+  letter-spacing: 0.3px;
+  margin-top: 6px;
+  text-align: center;
+  animation: pulseGently 2s infinite ease-in-out;
+}
+
+@keyframes pulseGently {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.envelope-sub-hint {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #8c786c;
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   MÀN HÌNH 2: NỘI DUNG THIỆP (TONE MÀU ĐỎ ĐÔ ẤM ÁP, QUÝ PHÁI, SANG TRỌNG)
+   ========================================================================== */
+#card-screen {
+  /* Nền đỏ đô chuyển sắc sang trọng kết hợp hoa văn chìm tinh tế */
+  background: 
+    radial-gradient(circle at 50% 20%, rgba(255, 200, 160, 0.12) 0%, transparent 50%),
+    linear-gradient(145deg, var(--card-bg-start) 0%, var(--card-bg-mid) 48%, var(--card-bg-end) 100%);
+  position: relative;
+  min-height: 100vh;
+  padding: 50px 20px 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+/* Lớp hoa văn pattern chìm tinh tế, sang trọng */
+#card-screen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(255, 230, 200, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.card-content-wrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: cardFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   [1] KHUNG ẢNH KIỂU POLAROID (VIỀN TRẮNG, ĐỔ BÓNG NHẸ, WASHI TAPE)
+   ========================================================================== */
+.polaroid-frame-container {
+  position: relative;
+  margin-bottom: 24px;
+  transform: rotate(-1.5deg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.polaroid-frame-container:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* Miếng dán băng dính washi tape mờ tinh tế phía trên ảnh */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 24px;
+  background: rgba(255, 240, 225, 0.65);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+  clip-path: polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+  opacity: 0.85;
+}
+
+.polaroid-inner {
+  background: #ffffff;
+  padding: 12px 12px 42px 12px;
+  border-radius: 4px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45),
+              0 3px 10px rgba(0, 0, 0, 0.2);
+  width: 250px;
+  max-width: 80vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: #f3f3f3;
+}
+
+.photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.photo-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+
+
+.polaroid-caption {
+  font-family: var(--font-script);
+  font-size: 18px;
+  color: #555555;
+  margin-top: 14px;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   [2] NỘI DUNG THIỆP: TIÊU ĐỀ & LỜI CHÚC & BÀI THƠ
+   ========================================================================== */
+.card-text-container {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Tiêu đề: "send Yến" (Font chữ nổi bật, vàng ánh kim) */
+.card-title {
+  font-family: var(--font-script);
+  font-size: clamp(38px, 8vw, 48px);
+  font-weight: 700;
+  color: var(--text-gold);
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 16px rgba(255, 215, 120, 0.45),
+               0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.card-message {
+  color: var(--text-cream);
+  font-size: 15.5px;
+  line-height: 1.85;
+  max-width: 460px;
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 400;
+}
+
+.highlight-greeting {
+  font-size: 16px;
+  color: #fff9f0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.card-divider {
+  margin: 18px 0 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider-flower {
+  color: var(--accent-gold);
+  font-size: 15px;
+  letter-spacing: 4px;
+  opacity: 0.9;
+}
+
+.card-poem-intro {
+  font-style: italic;
+  font-size: 15px;
+  color: #ffd9a6;
+  margin-bottom: 10px;
+}
+
+/* Khung bài thơ 4 câu lãng mạn */
+.card-poem-block {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.95;
+  color: #fff7eb;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 220, 180, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  margin-top: 6px;
+}
+
+.card-poem-block p {
+  margin-bottom: 3px;
+}
+
+.card-poem-block p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+/* ==========================================================================
+   [3] NÚT XEM LẠI KHOẢNH KHẮC MỞ THIỆP
+   ========================================================================== */
+.replay-section {
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.btn-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 235, 210, 0.25);
+  color: #fff5e6;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 9px 22px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-replay:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 235, 210, 0.45);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION (THÔNG BÁO NHẸ)
+   ========================================================================== */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(20, 20, 20, 0.92);
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN CHO THIẾT BỊ DI ĐỘNG (MOBILE & TABLET)
+   ========================================================================== */
+@media (max-width: 480px) {
+  :root {
+    --envelope-width: 290px;
+    --envelope-height: 185px;
+  }
+
+  .envelope-header-title {
+    font-size: 32px;
+  }
+
+  .envelope-footer-text {
+    font-size: 18px;
+  }
+
+  .polaroid-inner {
+    width: 230px;
+  }
+
+  .card-title {
+    font-size: 38px;
+  }
+
+  .card-message {
+    font-size: 14.5px;
+    padding: 0 8px;
+  }
+
+  .card-poem-block {
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+
+
+
+  .music-toggle-btn {
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

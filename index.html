@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dành Cho Bạn 💐 | Thiệp 20/10 Rạng Rỡ</title>
+
+  <!-- Google Fonts: Hỗ trợ tiếng Việt đầy đủ và thẩm mỹ cao -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Quicksand:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ============================================================== -->
+  <!-- 🌸 HƯỚNG DẪN DÀNH CHO BẠN (DỄ DÀNG TỰ CHỈNH SỬA TRONG CODE):    -->
+  <!-- 1. THAY ẢNH POLAROID: Sửa tên file trong <img id="polaroid-img" src="..." /> -->
+  <!--    Ví dụ: src="IMG_5534.JPG" hoặc tên ảnh của bạn để cùng thư mục này -->
+  <!-- 2. ĐỔI BÀI NHẠC (CHỈ SỬA TRONG CODE): Sửa tên file ở thẻ <source src="nhac.mp3"> -->
+  <!--    Ví dụ: src="nhac.mp3" hoặc tên file .mp3 bất kỳ để cùng thư mục này -->
+  <!-- 3. ĐỔI TÊN NGƯỜI NHẬN: Sửa chữ trong thẻ <h1 id="card-title">...</h1> -->
+  <!-- 4. ĐỔI LỜI CHÚC & BÀI THƠ: Sửa nội dung trong thẻ <div class="card-message"> -->
+  <!-- 5. ĐỔI MÀU NỀN / MÀU SẮC: Mở file style.css xem hướng dẫn ở đầu file -->
+  <!-- ============================================================== -->
+
+  <!-- Canvas tạo hiệu ứng bùng nổ hoa bay (Hoa cúc, hoa hồng, bó hoa, cánh hoa) -->
+  <canvas id="flower-canvas"></canvas>
+
+  <!-- Nút bật/tắt nhạc nền lãng mạn ở góc phải trên màn hình -->
+  <button id="music-toggle-btn" class="music-toggle-btn" title="Bật/Tắt giai điệu ngọt ngào" aria-label="Toggle Music">
+    <span class="music-icon">🎵</span>
+    <span class="music-text">Giai điệu</span>
+  </button>
+  <!-- Nhạc nền được gắn cố định trực tiếp vào code và phát lặp vô hạn (infinite loop) -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="nhac.mp3" type="audio/mpeg">
+    Trình duyệt không hỗ trợ phát âm thanh.
+  </audio>
+
+  <!-- ============================================================== -->
+  <!-- MÀN HÌNH 1: TRẠNG THÁI BAN ĐẦU (PHONG BÌ ĐÓNG)                 -->
+  <!-- ============================================================== -->
+  <section id="envelope-screen" class="screen-view active">
+    <div class="envelope-container">
+
+      <!-- Dòng chữ mềm mại phía trên phong bì -->
+      <h2 class="envelope-header-title">Dành cho riêng bạn đó 💐</h2>
+
+      <!-- Mũi tên màu xanh dương có hiệu ứng nhảy lên xuống (bounce) -->
+      <div class="bouncing-arrow-wrapper">
+        <svg class="bouncing-blue-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Khối phong bì thư thanh lịch vẽ bằng CSS -->
+      <div class="envelope-wrapper" id="envelope-wrapper" role="button" tabindex="0"
+        title="Nhấn vào phong bì để mở thư nhé!">
+        <div class="envelope">
+          <!-- Nắp trên của phong bì (có thể lật mở 3D) -->
+          <div class="flap flap-top">
+            <!-- Con dấu hoa niêm phong phong bì thanh nhã -->
+            <div class="wax-seal" title="Chạm để mở">
+              <span class="seal-flower">🌼</span>
+            </div>
+          </div>
+
+          <!-- Lá thư nhỏ hé lộ bên trong -->
+          <div class="letter-peek">
+            <div class="letter-inner-design">
+              <span class="letter-mini-flower">🌸</span>
+              <span class="letter-line"></span>
+              <span class="letter-line short"></span>
+            </div>
+          </div>
+
+          <!-- Các nắp gấp thân phong bì -->
+          <div class="flap flap-left"></div>
+          <div class="flap flap-right"></div>
+          <div class="flap flap-bottom"></div>
+        </div>
+      </div>
+
+      <!-- Dòng chữ ngọt ngào phía dưới phong bì -->
+      <p class="envelope-footer-text">Hãy mở thư nhó</p>
+      <span class="envelope-sub-hint">(Nhấp vào phong bì thư ở trên nè ✨)</span>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- MÀN HÌNH 2: NỘI DUNG THIỆP (SAU KHI MỞ)                        -->
+  <!-- ============================================================== -->
+  <section id="card-screen" class="screen-view">
+    <div class="card-content-wrapper">
+
+      <!-- ============================================================ -->
+      <!-- [CHÚ THÍCH 1]: KHUNG ẢNH POLAROID                            -->
+      <!-- Bạn có thể thay link ảnh / tên ảnh trong thuộc tính src bên dưới: -->
+      <!-- Ví dụ: src="ai_repair_20261011210032551.JPEG" hoặc src="IMG_5534.JPG" -->
+      <!-- ============================================================ -->
+      <div class="polaroid-frame-container" id="polaroid-frame">
+        <div class="washi-tape"></div>
+        <div class="polaroid-inner">
+          <div class="photo-wrapper">
+            <img id="polaroid-img" src="ai_repair_20261011210032551.JPEG" alt="Bó hoa và nụ cười rạng rỡ"
+              loading="lazy">
+          </div>
+          <!-- Chữ ký / dòng ghi chú viết tay phong cách Polaroid -->
+          <div class="polaroid-caption">A sweet day for you 🌼</div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- [CHÚ THÍCH 2]: NỘI DUNG LỜI CHÚC VÀ BÀI THƠ                  -->
+      <!-- Bạn có thể chỉnh sửa trực tiếp chữ ở các dòng dưới đây       -->
+      <!-- ============================================================ -->
+      <div class="card-text-container">
+        <!-- Tiêu đề nổi bật: Bạn có thể sửa "send Yến" thành tên khác -->
+        <h1 class="card-title" id="card-title">gửi bạn Yến</h1>
+
+        <div class="card-message">
+          <!-- Đoạn mở đầu lời chúc -->
+          <p class="card-paragraph highlight-greeting">
+            Nhân ngày 20/10, chúc cậu một ngày trọn vẹn niềm vui. 
+            Nụ cười của cậu vốn đã là điều tuyệt vời nhất, nên hôm nay cứ thả xô xát những muộn phiền, 
+            cười thật nhiều và tỏa sáng theo cách riêng của mình nhé!
+          </p>
+
+          <div class="card-divider">
+            <span class="divider-flower">✦ 💐 ✦</span>
+          </div>
+
+          <!-- Đoạn dẫn vào bài thơ -->
+          <p class="card-poem-intro">Tớ muốn nói thêm rằng:</p>
+
+          <!-- Bài thơ 4 câu tình cảm, lãng mạn -->
+          <div class="card-poem-block">
+            <p>Gió thu xao xác lá vàng rơi,</p>
+            <p>Gửi mấy lời thơ tới bạn thôi</p>
+            <p>Chúc giữ nét duyên, luôn xinh đẹp,</p>
+            <p>Bình an, rạng rỡ những nụ cười.</p>
+            <p>Hai mươi tháng Mười luôn toả sáng,</p>
+            <p>Rực rỡ niềm vui chẳng muộn phiền.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút xem lại hiệu ứng hoa bay mở phong bì -->
+      <div class="replay-section">
+        <button id="replay-btn" class="btn-replay">
+          <span>🔄 Xem lại khoảnh khắc mở thiệp</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Thông báo Toast tinh tế góc dưới màn hình -->
+  <div id="toast-notification" class="toast-notification"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
